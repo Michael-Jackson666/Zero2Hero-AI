@@ -36,6 +36,9 @@ MANIFEST
 *.pickle
 *.tsv
 
+# 允许跟踪依赖文件
+!requirements.txt
+
 # Jupyter Notebook
 .ipynb_checkpoints
 
