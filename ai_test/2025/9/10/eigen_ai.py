@@ -191,26 +191,64 @@ def sliding_window_features(input_array, window_array):
     return result
 
 
+def format_output(value):
+    """
+    格式化输出数字，去除不必要的小数点和零
+    
+    参数:
+        value: 要格式化的数值
+    
+    返回:
+        格式化后的字符串
+    """
+    if abs(value) >= 1:
+        # 整数部分不为0，保留3位小数后去除末尾0
+        s = f"{value:.3f}".rstrip('0').rstrip('.')
+        return s if s else "0"
+    elif value == 0:
+        return "0"
+    else:
+        # 整数部分为0，已经通过round_number处理过
+        return str(value)
+
+
 def main():
     """
     主函数: 从标准输入读取数据并输出结果
+    输入格式: [a, b, c, ...] (第一行输入数组，带方括号和逗号)
+             [w1, w2, ...] (第二行窗口大小数组，带方括号和逗号)
+    输出格式: [v1,v2,v3,...] (每行一个数组，带方括号和逗号，无空格)
     """
-    # 读取输入数组
-    input_line = input().strip()
-    input_array = list(map(float, input_line.split()))
+    import sys
+    import re
     
-    # 读取窗口大小数组
-    window_line = input().strip()
-    window_array = list(map(int, window_line.split()))
+    # 读取所有输入
+    sall = sys.stdin.read()
+    
+    # 提取两个数组的内容
+    blocks = re.findall(r'\[([^\]]*)\]', sall)
+    
+    if len(blocks) < 2:
+        print("[]")
+        sys.exit(0)
+    
+    # 提取数字（支持负数和浮点数）
+    input_array = list(map(float, re.findall(r'-?\d+\.?\d*', blocks[0])))
+    window_array = list(map(int, re.findall(r'-?\d+', blocks[1])))
+    
+    if not input_array or not window_array:
+        print("[]")
+        sys.exit(0)
     
     # 计算特征
     result = sliding_window_features(input_array, window_array)
     
-    # 输出结果
+    # 输出结果（格式化为 [v1,v2,v3,...]，无空格）
     for row in result:
-        # 将每行转换为字符串并输出
-        row_str = ' '.join(str(val) for val in row)
-        print(row_str)
+        # 格式化每个值
+        formatted_values = [format_output(val) for val in row]
+        # 输出为 [v1,v2,v3,...] 格式
+        print("[" + ",".join(formatted_values) + "]")
 
 
 if __name__ == "__main__":

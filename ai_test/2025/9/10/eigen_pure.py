@@ -32,9 +32,43 @@
 - 每一行对应一个滑动窗口的起始位置, 包含了所有窗口大小计算出的特征的拼接结果.
 - 每个窗口大小对应的特征顺序为 [mean, std, min, max, slope].
 """
+import numpy as np
+import sys, math
+
+def round_number(value):
+    """
+    根据题目要求的数值规则进行四舍五入
+    规则:
+    --整数则不带小数点
+    --有小数则最多保留3位(四舍五入)
+    参数:
+        value: 要修约的数值
+    返回:
+        修约后的数值
+    """
+    if np.isnan(value) or np.isinf(value):
+        return value
+    
+    abs_value = abs(value)
+    
+    # 整数部分不为0: 保留小数点后3位
+    if abs_value >= 1:
+        return round(value, 3)
+    
+    # 整数部分为0: 保留4位有效数字
+    elif abs_value > 0:
+        digits = -int(math.floor(math.log10(abs_value))) + 3
+        return round(value, digits)
+    
+    return value
+
+
 
 
 def main():
+    """
+    主函数: 读取输入, 计算特征, 输出结果
+    """
     return
 
 if __name__ == "__main__":
