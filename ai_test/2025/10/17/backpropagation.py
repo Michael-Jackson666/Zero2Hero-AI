@@ -12,6 +12,9 @@ def print_formatted_matrix(matrix):
 
 def print_formatted_vector(vector):
     """Prints a vector (as a single row) with 4 decimal places."""
+    # 如果是2D数组 (1, n)，展平为1D数组
+    if hasattr(vector, 'ndim') and vector.ndim == 2:
+        vector = vector.flatten()
     print(" ".join(f"{x:.4f}" for x in vector))
     
 def stable_softmax(z):
@@ -22,42 +25,70 @@ def stable_softmax(z):
 
 def backprop(dZ, K, A, M, Z):
     """
-    实现反向传播算法
+    实现反向传播算法，计算神经网络中所有权重和偏置的梯度
+    
+    算法思路:
+    1. 从输出层(第K层)开始，逐层向前计算梯度
+    2. 对每一层i，计算两个梯度:
+       - grad_M[i]: 权重矩阵 M[i] 的梯度
+       - grad_b[i]: 偏置向量 b[i] 的梯度
+    3. 使用链式法则将梯度传播到前一层
+    4. 对隐藏层，需要乘以 ReLU 激活函数的导数
     
     参数:
-        dZ: 输出层的梯度 (已计算好的 dZ[K])
-        K: 层数
+        dZ: 输出层的梯度 (shape: (N, output_dim))，已经通过 Softmax+CrossEntropy 计算得到
+        K: 网络层数（不包括输入层）
         A: 各层的激活值列表 [A[0], A[1], ..., A[K]]
+           - A[0] 是输入 X (shape: N × input_dim)
+           - A[i] 是第i层的激活输出 (shape: N × dims[i])，i=1..K
         M: 权重矩阵列表 [None, M[1], M[2], ..., M[K]]
+           - M[i] 是第i层的权重矩阵 (shape: dims[i-1] × dims[i])
         Z: 各层的线性输出列表 [None, Z[1], Z[2], ..., Z[K]]
+           - Z[i] = A[i-1] @ M[i] + b[i] (shape: N × dims[i])
     
     返回:
-        grad_M: 权重矩阵的梯度
-        grad_b: 偏置向量的梯度
+        grad_M: 权重矩阵的梯度列表 [None, grad_M[1], ..., grad_M[K]]
+        grad_b: 偏置向量的梯度列表 [None, grad_b[1], ..., grad_b[K]]
+    
+    数学推导:
+        对于第i层: Z[i] = A[i-1] @ M[i] + b[i], A[i] = activation(Z[i])
+        
+        权重梯度: ∂L/∂M[i] = A[i-1]^T @ (∂L/∂Z[i])
+        偏置梯度: ∂L/∂b[i] = sum(∂L/∂Z[i], axis=0)
+        
+        传播到前一层: ∂L/∂A[i-1] = (∂L/∂Z[i]) @ M[i]^T
+        应用激活函数导数: ∂L/∂Z[i-1] = ∂L/∂A[i-1] ⊙ activation'(Z[i-1])
     """
-    # 初始化梯度存储
+    # 初始化梯度存储列表，索引0位置留空（不使用）
     grad_M = [None] * (K + 1)
     grad_b = [None] * (K + 1)
     
-    # 当前层的梯度（从输出层开始）
+    # 当前层的梯度 dZ_current = ∂L/∂Z[i]，从输出层的 dZ[K] 开始
     dZ_current = dZ
     
-    # 从最后一层反向传播到第一层
+    # 反向遍历所有层: 从第K层到第1层
     for i in range(K, 0, -1):
-        # 计算权重梯度: dL/dM[i] = A[i-1]^T @ dZ[i]
+        # === 步骤1: 计算权重梯度 ===
+        # grad_M[i] = ∂L/∂M[i] = A[i-1]^T @ dZ_current
+        # 矩阵维度: (dims[i-1], N) @ (N, dims[i]) = (dims[i-1], dims[i])
         grad_M[i] = A[i-1].T @ dZ_current
         
-        # 计算偏置梯度: dL/db[i] = sum(dZ[i], axis=0)
-        # 保持形状为 (1, dim) 以匹配 b[i] 的形状
+        # === 步骤2: 计算偏置梯度 ===
+        # grad_b[i] = ∂L/∂b[i] = sum(dZ_current, axis=0)
+        # 对批次维度求和，保持形状为 (1, dims[i]) 以匹配 b[i] 的形状
         grad_b[i] = np.sum(dZ_current, axis=0, keepdims=True)
         
-        # 如果不是第一层，继续反向传播
+        # === 步骤3: 将梯度传播到前一层 ===
+        # 只有当不是第一层时才需要继续反向传播
         if i > 1:
-            # 计算传递到前一层的梯度: dZ[i-1] = dZ[i] @ M[i]^T
+            # 3.1 计算对前一层激活值的梯度: ∂L/∂A[i-1] = dZ_current @ M[i]^T
+            # 矩阵维度: (N, dims[i]) @ (dims[i], dims[i-1]) = (N, dims[i-1])
             dA_prev = dZ_current @ M[i].T
             
-            # 应用 ReLU 的导数
-            # ReLU 导数: d(ReLU(z))/dz = 1 if z > 0, else 0
+            # 3.2 应用 ReLU 激活函数的导数
+            # ReLU'(z) = 1 if z > 0, else 0
+            # ∂L/∂Z[i-1] = ∂L/∂A[i-1] ⊙ ReLU'(Z[i-1])
+            # 元素级乘法: 将梯度传递到未激活的线性输出上
             dZ_current = dA_prev * (Z[i-1] > 0)
     
     return grad_M, grad_b
