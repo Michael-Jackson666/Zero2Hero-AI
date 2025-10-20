@@ -79,7 +79,7 @@ class UnionFind:
     def get_size(self):
         """返回每个连通分量(簇)的大小列表。"""
         roots = [self.find(i) for i in range(len(self.parent))]
-        counter = Counter(roots)
+        counter = Counter(roots) # 转为Hash映射统计出现的次数
         return list(counter.values())
 
 def main():
