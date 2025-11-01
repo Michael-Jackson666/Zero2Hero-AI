@@ -79,7 +79,6 @@ transformers_cache/
 
 # 日志和图片
 *.log
-*.png
 *.pdf
 *.jpg
 *.jpeg
