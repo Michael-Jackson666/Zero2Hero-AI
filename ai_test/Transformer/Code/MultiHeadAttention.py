@@ -1,4 +1,4 @@
-from Transformer.ScaledDotProductAttention import ScaledDotProductAttention
+from ScaledDotProductAttention import ScaledDotProductAttention
 import torch.nn as nn
 from torch import Tensor
 class MultiHeadAttention(nn.Module):
