@@ -18,9 +18,16 @@
 ```
 huggingface/
 ├── README.md                    # 本文件
-├── api_test01.py               # 基础示例：文本生成、问答、翻译
-└── huggingface_examples.py     # 完整示例：8种常用NLP任务
+├── api_test01.py               # 基础示例：文本生成、问答、翻译（推荐在终端运行）
+├── huggingface_examples.py     # 完整示例：8种常用NLP任务（推荐在终端运行）
+└── demo.ipynb                  # Gradio交互式演示（Jupyter Notebook）
 ```
+
+### 文件用途
+
+- **api_test01.py**: 演示3个基础NLP任务（文本生成、问答、翻译）
+- **huggingface_examples.py**: 包含8个常用NLP任务的完整示例
+- **demo.ipynb**: Gradio可视化界面演示，包含简化的情感分类示例
 
 ---
 
@@ -42,12 +49,18 @@ pip install transformers datasets accelerate tokenizers huggingface_hub torch
 ### 运行示例
 
 ```bash
-# 运行基础示例
-python api_test01.py
+# 方式1: 运行Python脚本（推荐）
+python api_test01.py                 # 基础示例
+python huggingface_examples.py       # 完整示例
 
-# 运行完整示例集
-python huggingface_examples.py
+# 方式2: 运行Jupyter Notebook
+jupyter notebook demo.ipynb          # Gradio交互式演示
 ```
+
+**⚠️ 重要提示**：
+- **Python脚本**：在终端运行，所有transformers功能正常
+- **Jupyter Notebook**：由于PyTorch依赖问题，使用简化版演示
+- 建议优先使用Python脚本学习Hugging Face模型
 
 ---
 
@@ -255,6 +268,26 @@ huggingface-cli login
 # 输入 Access Token
 ```
 
+### Q5: Jupyter Notebook中transformers无法使用？
+**问题描述**: notebook kernel中PyTorch损坏，导致 `AttributeError: module 'torch' has no attribute 'Tensor'`
+
+**解决方案**:
+```bash
+# 方案1: 在终端运行Python脚本（推荐）
+python api_test01.py
+
+# 方案2: 使用demo.ipynb中的简化版Gradio演示
+jupyter notebook demo.ipynb
+
+# 方案3: 重建conda环境
+conda env remove -n huggingface
+conda create -n huggingface python=3.10 -y
+conda activate huggingface
+pip install transformers datasets accelerate tokenizers torch gradio
+```
+
+**注意**: 终端运行的Python脚本可以正常使用所有功能
+
 ---
 
 ## 📖 学习资源
@@ -282,11 +315,14 @@ huggingface-cli login
 - [x] 文本生成任务实践
 - [x] 问答系统实现
 - [x] 翻译功能测试
+- [x] Gradio可视化界面创建
+- [x] 基础NLP任务演示（8种任务）
 - [ ] 模型微调（Fine-tuning）
 - [ ] 自定义数据集训练
 - [ ] 模型量化和优化
 - [ ] 生产环境部署
-- [ ] API服务搭建
+- [ ] API服务搭建（FastAPI）
+- [ ] 解决Jupyter Notebook中的PyTorch依赖问题
 
 ---
 
@@ -308,8 +344,24 @@ huggingface-cli login
 - **主要依赖**:
   - transformers: 4.57.1
   - torch: 2.9.1
-  - datasets: 4.4.1
+  - datasets: 2.12.0
   - accelerate: 1.11.0
+  - gradio: 5.49.1
+  - peft: 0.18.0
+  - optimum: 2.0.0
+  - sentencepiece: 0.2.1
+
+### 已知问题
+
+⚠️ **Jupyter Notebook PyTorch问题**:
+- **症状**: `AttributeError: module 'torch' has no attribute 'Tensor'`
+- **影响**: Notebook中无法使用transformers库
+- **临时方案**: 使用终端运行Python脚本
+- **状态**: 待解决
+
+✅ **终端运行正常**:
+- 所有Python脚本在终端中运行完全正常
+- transformers、torch等库功能完整
 
 ---
 
@@ -319,6 +371,11 @@ huggingface-cli login
 
 ---
 
-**最后更新**: 2025年11月19日
+**最后更新**: 2025年11月20日
 
 **学习状态**: 🚀 进行中
+
+**推荐使用方式**: 
+- 📝 学习：运行Python脚本（`api_test01.py`, `huggingface_examples.py`）
+- 🎨 演示：使用Gradio界面（`demo.ipynb`，简化版）
+- 🔧 生产：等待PyTorch问题解决后使用完整功能
