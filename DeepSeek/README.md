@@ -1,218 +1,96 @@
-# DeepSeek 研究成果学习与复现
+# DeepSeek 论文精读与复现
 
-## 📚 项目简介
+本目录包含 DeepSeek 系列论文的学习笔记和代码实现。
 
-本项目专注于研究和复现DeepSeek团队的重要工作成果，包括他们在大语言模型、数学推理、代码生成、混合专家模型等领域的突破性研究。
-
-## 🎯 研究目标
-
-- 深入理解DeepSeek系列模型的技术原理
-- 复现关键论文的实验结果
-- 学习先进的模型架构设计思路
-- 实践大模型训练和推理优化技术
-
-## 📖 研究内容
-
-### 1. DeepSeek-V2: 混合专家大语言模型
-**论文**: "DeepSeek-V2: A Strong, Economical, and Efficient Mixture-of-Experts Language Model"
-- **状态**: 📋 计划中
-- **目录**: `DeepSeek-MoE/`
-- **重点研究内容**:
-  - MLA (Multi-head Latent Attention) 机制
-  - DeepSeekMoE 架构设计
-  - Expert路由策略
-  - 训练效率优化
-
-### 2. DeepSeek-Math: 数学推理专家模型
-**论文**: "DeepSeek-Math: Pushing the Limits of Mathematical Reasoning in Open Models"
-- **状态**: 📋 计划中
-- **目录**: `DeepSeek-Math/`
-- **重点研究内容**:
-  - 数学推理数据构建
-  - 工具集成强化学习（TIRS）
-  - 数学问题求解策略
-  - 评估基准和指标
-
-### 3. DeepSeek-Coder: 代码生成与理解
-**论文**: "DeepSeek-Coder: When the Large Language Model Meets Programming"
-- **状态**: 📋 计划中
-- **目录**: `DeepSeek-Coder/`
-- **重点研究内容**:
-  - 代码预训练数据处理
-  - 指令微调技术
-  - 代码补全和生成
-  - 多编程语言支持
-
-### 4. DeepSeek-VL: 多模态视觉语言模型
-**论文**: "DeepSeek-VL: Towards Real-World Vision-Language Understanding"
-- **状态**: 📋 计划中
-- **目录**: `DeepSeek-VL/`
-- **重点研究内容**:
-  - 视觉编码器设计
-  - 视觉-语言对齐
-  - 混合数据训练策略
-  - 实际应用场景适配
-
-### 5. mHC: 分层一致性训练方法
-**论文**: "Training Chain-of-Thought via Latent-Variable Inference"
-- **状态**: 🚧 进行中
-- **目录**: `mHC/`
-- **重点研究内容**:
-  - 分层一致性损失函数
-  - 潜变量推理框架
-  - 思维链训练优化
-  - 推理质量提升
-
-### 6. Engram: 无限长度推理
-**论文**: "From Retrieval to Infinite Mixture-of-Memories: Towards Unlimited Context Length in Transformers"
-- **状态**: 🚧 进行中
-- **目录**: `Engram/`
-- **重点研究内容**:
-  - 无限上下文长度处理
-  - 混合记忆机制
-  - 动态检索策略
-  - 长序列建模优化
-
-## 🛠️ 技术栈
-
-- **深度学习框架**: PyTorch, Transformers
-- **模型训练**: DeepSpeed, FairScale
-- **数据处理**: Datasets, NumPy, Pandas
-- **评估工具**: BLEU, ROUGE, Human Eval
-- **可视化**: Matplotlib, Wandb
-
-## 📁 项目结构
+## 📁 目录结构
 
 ```
 DeepSeek/
-├── README.md                  # 项目说明文档
-├── DeepSeek-MoE/             # V2混合专家模型
-│   ├── models/               # 模型实现
-│   ├── training/             # 训练脚本
-│   ├── inference/            # 推理代码
-│   └── experiments/          # 实验记录
-├── mHC/                      # 分层一致性方法
-│   ├── latent_inference/     # 潜变量推理
-│   ├── chain_of_thought/     # 思维链训练
-│   └── evaluation/           # 评估代码
-├── Engram/                   # 无限长度推理
-│   ├── memory_systems/       # 记忆系统
-│   ├── retrieval/           # 检索机制
-│   └── long_context/        # 长上下文处理
-├── DeepSeek-Math/           # 数学推理
-├── DeepSeek-Coder/          # 代码生成
-├── DeepSeek-VL/             # 视觉语言
-└── utils/                   # 通用工具函数
+├── DeepSeek-MoE/              # DeepSeekMoE 混合专家模型
+│   ├── README.md              # 模块概述
+│   ├── MoE简介.md             # 📝 MoE 基础知识
+│   ├── DeepSeek-MoE.md        # 📝 DeepSeekMoE 详细笔记
+│   ├── DeepSeekMoE.png        # 🖼️ 架构图
+│   ├── MoE Layer.png          # 🖼️ MoE 层示意图
+│   └── Code/                  # 💻 PyTorch 实现
+│       ├── experts.py         # 专家网络 (SwiGLU FFN)
+│       ├── router.py          # Top-K 路由与负载均衡
+│       ├── moe_layer.py       # MoE 层 (共享+路由专家)
+│       └── deepseek_moe.py    # 完整模型实现
+│
+├── Engram/                    # Engram 条件记忆架构
+│   ├── README.md              # 模块概述
+│   ├── Engram.md              # 📝 Engram 详细笔记
+│   ├── Engram.png             # 🖼️ 架构图
+│   ├── Sparsity allocation and Engram scaling.png
+│   └── Code/                  # 💻 PyTorch 实现
+│       ├── tokenizer_compression.py  # Token 压缩与 N-gram 提取
+│       ├── multi_head_hashing.py     # 多头哈希与 Embedding 查找
+│       ├── context_aware_gating.py   # 上下文感知门控
+│       ├── fusion.py                 # 深度卷积融合层
+│       └── engram.py                 # 完整 Engram 模块
+│
+├── mHC/                       # mHC 多头因果架构
+│   ├── mHC.md                 # 📝 mHC 学习笔记
+│   ├── mHC.png                # 🖼️ 架构图
+│   └── Communication-Computation Overlapping for mHC.png
+│
+└── DeepThink.md               # 📝 深度思考笔记
 ```
+
+## 📚 已完成内容
+
+### 1. DeepSeekMoE - 极致专家特化
+
+**论文**: [DeepSeekMoE: Towards Ultimate Expert Specialization](https://arxiv.org/abs/2401.06066)
+
+| 内容 | 状态 |
+|------|------|
+| MoE 基础知识笔记 | ✅ 完成 |
+| DeepSeekMoE 原理笔记 | ✅ 完成 |
+| 代码实现 (前向传播) | ✅ 完成 |
+
+**核心创新**:
+- 细粒度专家分割 (1/m 大小)
+- 共享专家隔离 (始终激活)
+- Top-K 路由与负载均衡
+
+### 2. Engram - 条件记忆
+
+**论文**: [Conditional Memory via Scalable Lookup](https://arxiv.org/abs/2601.07372)
+
+| 内容 | 状态 |
+|------|------|
+| Engram 原理笔记 | ✅ 完成 |
+| 代码实现 (前向传播) | ✅ 完成 |
+
+**核心创新**:
+- 条件记忆 (与 MoE 条件计算互补)
+- N-gram 多头哈希检索
+- 上下文感知门控
+- 零开销预取机制
+
+### 3. mHC - 多头因果架构
+
+**论文**: DeepSeek-V3 系列
+
+| 内容 | 状态 |
+|------|------|
+| mHC 学习笔记 | ✅ 完成 |
+| 代码实现 | 📋 计划中 |
 
 ## 🚀 快速开始
 
-### 环境配置
 ```bash
-# 创建虚拟环境
-conda create -n deepseek-research python=3.9
-conda activate deepseek-research
+cd DeepSeek
 
-# 安装依赖
-pip install torch transformers datasets accelerate
-pip install deepspeed wandb
+# 运行 DeepSeekMoE 示例
+python DeepSeek-MoE/Code/deepseek_moe.py
+
+# 运行 Engram 示例
+python Engram/Code/engram.py
 ```
 
-### 基础使用
-```bash
-# 克隆模型代码
-git clone https://github.com/deepseek-ai/DeepSeek-V2
+## 📄 License
 
-# 运行基础推理示例
-python inference/basic_inference.py
-```
-
-## 📊 实验记录
-
-### 已完成实验
-
-- [ ] DeepSeek-V2 基础架构复现
-- [ ] MLA注意力机制验证
-- [ ] mHC训练方法实现
-- [ ] Engram记忆系统测试
-
-### 进行中实验
-
-- 🚧 分层一致性损失函数实现
-- 🚧 无限长度序列处理优化
-
-### 计划中实验
-
-- 📋 数学推理数据集构建
-- 📋 代码生成模型微调
-- 📋 多模态对齐训练
-
-## 📈 性能基准
-
-### 模型规模对比
-| 模型 | 参数量 | 激活参数 | 训练Token | 性能提升 |
-|------|--------|----------|-----------|----------|
-| DeepSeek-V2 | 236B | 21B | 8.1T | +30% |
-| DeepSeek-Math | 7B | 7B | - | MATH: 51.7% |
-
-### 效果评估
-- **语言建模**: 困惑度对比
-- **数学推理**: MATH/GSM8K评估
-- **代码生成**: HumanEval/MBPP测试
-- **长文本理解**: 无限长度处理能力
-
-## 🔗 相关资源
-
-### 官方资源
-- [DeepSeek官方网站](https://www.deepseek.com/)
-- [DeepSeek GitHub](https://github.com/deepseek-ai)
-- [技术博客](https://www.deepseek.com/blog)
-
-### 论文链接
-- [DeepSeek-V2论文](https://arxiv.org/abs/2405.04434)
-- [DeepSeek-Math论文](https://arxiv.org/abs/2402.03300)
-- [mHC论文链接](待更新)
-
-### 学习资料
-- 混合专家模型综述
-- Transformer架构演进
-- 大模型训练实践指南
-
-## 💡 学习笔记
-
-### 核心技术洞察
-1. **MLA注意力机制**: 通过潜在注意力降低KV缓存内存使用
-2. **专家路由策略**: 实现计算效率与模型能力的平衡
-3. **分层一致性**: 提升思维链推理的质量和可靠性
-
-### 实现难点
-- [ ] 大规模模型分布式训练
-- [ ] 内存优化与计算效率平衡
-- [ ] 多任务学习策略设计
-
-## 🤝 贡献指南
-
-欢迎提交Issues和Pull Requests来改进项目：
-
-1. Fork本项目
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启Pull Request
-
-## 📄 许可证
-
-本项目采用 MIT 许可证 - 详见 [LICENSE](../LICENSE) 文件
-
-## 📞 联系方式
-
-如有问题或建议，欢迎通过以下方式联系：
-- 项目Issues
-- 邮箱: [your-email]
-- 讨论区: [discussion-link]
-
----
-
-**更新时间**: 2026年1月27日  
-**当前版本**: v1.0.0  
-**研究状态**: 积极进行中 🔥
+MIT License
